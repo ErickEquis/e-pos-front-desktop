@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, utilityProcess } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { fork, spawn } = require('child_process');
+const UpdaterManager = require(path.join(__dirname, 'updater.cjs'));
 const isDev = process.env.NODE_ENV === 'development';
 
 let mainWindow;
@@ -133,8 +134,18 @@ app.whenReady().then(() => {
             createWindow();
         }
     });
+
+    // Inicializar el sistema de actualizaciones automáticas
+    if (!isDev) {
+        const updater = new UpdaterManager(mainWindow);
+        updater.checkForUpdates();
+    }
 });
 
+
+
+
+ipcMain.handle('get-app-version', () => app.getVersion());
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();

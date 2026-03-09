@@ -33,6 +33,10 @@ import { logout } from "./store/slices/e-pos/ePosSlice";
 import NotificationManager from "@/components/ui/notification-manager";
 import Profile from "./pages/ePos/Profile";
 import Ventas from "@/pages/ePos/Ventas";
+import { UpdaterNotification } from "@/components/UpdaterNotification";
+import { UpdateBanner } from "@/components/UpdateBanner";
+
+
 
 function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -69,18 +73,24 @@ function Layout() {
         <main className="flex-1 overflow-auto p-3 md:p-6 bg-muted/30">
           <Outlet />
         </main>
+
       </div>
     </div>
   );
 }
 
 function LayoutAuth({ children }: { children: React.ReactNode }) {
-
+  const [version, setVersion] = useState("");
   const dispatch = useDispatch<any>();
 
   useEffect(() => {
     dispatch(revisarSesion());
+    if ((window as any).electronAPI?.updater?.getAppVersion) {
+      (window as any).electronAPI.updater.getAppVersion().then((v: string) => setVersion(v));
+    }
   }, []);
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pos-primary to-blue-600 flex items-center justify-center p-4">
@@ -93,7 +103,13 @@ function LayoutAuth({ children }: { children: React.ReactNode }) {
             <CardTitle className="text-xl md:text-2xl font-bold text-foreground">
               e-POS
             </CardTitle>
-            <p className="text-sm md:text-base text-muted-foreground">Sistema de Ventas</p>
+            <div className="flex flex-col">
+              <p className="text-sm md:text-base text-muted-foreground">Sistema de Ventas</p>
+              {version && (
+                <p className="text-xs text-muted-foreground/80 font-mono tracking-tighter">v{version}</p>
+              )}
+            </div>
+
           </div>
         </CardHeader>
 
@@ -168,9 +184,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="pos-ui-theme">
         <Provider store={store}>
+          <UpdateBanner />
           <AppContent />
           <NotificationManager />
+          <UpdaterNotification />
         </Provider>
+
+
       </ThemeProvider>
     </QueryClientProvider>
   );

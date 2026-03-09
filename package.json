@@ -20,6 +20,13 @@
   "build": {
     "appId": "com.epos.desktop",
     "productName": "e-POS",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Erick",
+        "repo": "e-pos-desktop"
+      }
+    ],
     "asar": true,
     "afterPack": "afterPack.cjs",
     "asarUnpack": [
@@ -33,6 +40,7 @@
       "dist/**/*",
       "main.cjs",
       "preload.cjs",
+      "updater.cjs",
       "package.json",
       "desktop-api/**/*"
     ],
@@ -40,7 +48,7 @@
       "target": [
         "dmg"
       ],
-      "icon": "build/icon.icns"
+      "icon": "build/icon.png"
     }
   },
   "dependencies": {
@@ -116,7 +124,8 @@
     "three": "^0.176.0",
     "vaul": "^0.9.3",
     "xlsx": "^0.18.5",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "electron-updater": "^6.3.9"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",
